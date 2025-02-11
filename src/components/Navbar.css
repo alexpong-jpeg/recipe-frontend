@@ -1,23 +1,33 @@
+/* Navbar.css */
 .navbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
     background-color: #1976d2;
-    padding: 1rem;
+    padding: 16px;
     color: white;
   }
   
   .nav-links {
     list-style: none;
     display: flex;
-    gap: 1rem;
+    gap: 16px;
+    margin: 0;
+    padding: 0;
   }
   
   .nav-links li {
     cursor: pointer;
+    font-size: 16px;
+    transition: opacity 0.3s ease;
+  }
+  
+  .nav-links li:hover {
+    opacity: 0.8;
   }
   
   .nav-links li.active {
     font-weight: bold;
     text-decoration: underline;
   }
+  

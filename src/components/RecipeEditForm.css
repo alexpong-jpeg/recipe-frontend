@@ -1,61 +1,65 @@
-/* Container styling for the edit form */
+/* RecipeEditForm.css */
 .recipe-edit-form {
-    background-color: #f9f9f9;
-    padding: 1.5rem;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+    margin: 20px auto;
     max-width: 600px;
-    margin: 1rem auto;
-}
-
-/* Header styling */
-.recipe-edit-form h3 {
-    margin-bottom: 1rem;
+    background-color: #fff;
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+  
+  .recipe-edit-form h2 {
     text-align: center;
-}
-
-/* Form group styling */
-.recipe-edit-form .form-group {
-    margin-bottom: 1rem;
-}
-
-/* Label styling for form inputs */
-.recipe-edit-form label {
+    margin-bottom: 16px;
+  }
+  
+  .recipe-edit-form .form-group {
+    margin-bottom: 16px;
+  }
+  
+  .recipe-edit-form label {
     display: block;
     font-weight: bold;
-    margin-bottom: 0.5rem;
-}
-
-/* Input and textarea styling */
-.recipe-edit-form input[type="text"],
-.recipe-edit-form input[type="number"],
-.recipe-edit-form textarea {
+    margin-bottom: 8px;
+  }
+  
+  .recipe-edit-form input,
+  .recipe-edit-form textarea {
     width: 100%;
-    padding: 0.5rem;
+    padding: 8px;
     border: 1px solid #ccc;
-    border-radius: 3px;
+    border-radius: 4px;
     box-sizing: border-box;
-}
-
-/* Specific styling for textareas */
-.recipe-edit-form textarea {
-    min-height: 80px;
-    resize: vertical;
-}
-
-/* Button styling */
-.recipe-edit-form button {
-    padding: 0.5rem 1rem;
-    margin-right: 0.5rem;
+  }
+  
+  .recipe-edit-form .nested-inputs {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  
+  .recipe-edit-form .nested-inputs input {
+    flex: 1;
+  }
+  
+  .recipe-edit-form .status-message {
+    text-align: center;
+    color: green;
+    margin-bottom: 16px;
+  }
+  
+  .recipe-edit-form button {
+    padding: 8px 16px;
+    margin-right: 8px;
     border: none;
-    border-radius: 3px;
     background-color: #1976d2;
-    color: #fff;
+    color: white;
+    border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-}
-
-/* Hover state for buttons */
-.recipe-edit-form button:hover {
+  }
+  
+  .recipe-edit-form button:hover {
     background-color: #1565c0;
-}
+  }
+  

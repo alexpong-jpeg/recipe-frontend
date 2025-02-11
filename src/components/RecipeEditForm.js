@@ -1,21 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './RecipeForm.css';
+import './RecipeEditForm.css';
 
-function RecipeForm({ onRecipeCreated }) {
-  // Main recipe state
-  const [recipe, setRecipe] = useState({
-    title: '',
-    description: '',
-    prepTime: '',
-    cookTime: '',
-    servings: '',
-    ingredients: [],
-    steps: [],
-    tags: []
-  });
+function RecipeEditForm({ initialRecipe, onCancel, onUpdate }) {
+  const [recipe, setRecipe] = useState(initialRecipe);
 
-  // State for current nested field inputs
+  // State for current nested input fields
   const [ingredientInput, setIngredientInput] = useState({
     name: '',
     quantity: '',
@@ -25,24 +15,25 @@ function RecipeForm({ onRecipeCreated }) {
     instruction: ''
   });
   const [tagInput, setTagInput] = useState('');
-
   const [message, setMessage] = useState('');
 
-  // Handle changes for main recipe fields
+  // Update local recipe state if the initialRecipe prop changes
+  useEffect(() => {
+    setRecipe(initialRecipe);
+  }, [initialRecipe]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setRecipe(prev => ({ ...prev, [name]: value }));
   };
 
-  // Update ingredient input fields
   const handleIngredientChange = (e) => {
     const { name, value } = e.target;
     setIngredientInput(prev => ({ ...prev, [name]: value }));
   };
 
-  // Add the current ingredient to the recipe
   const addIngredient = () => {
-    if (!ingredientInput.name) return; // simple check
+    if (!ingredientInput.name) return;
     const newIngredient = {
       ...ingredientInput,
       ingredientOrder: recipe.ingredients.length + 1
@@ -54,15 +45,13 @@ function RecipeForm({ onRecipeCreated }) {
     setIngredientInput({ name: '', quantity: '', measurementUnit: '' });
   };
 
-  // Update step input field
   const handleStepChange = (e) => {
     const { name, value } = e.target;
     setStepInput(prev => ({ ...prev, [name]: value }));
   };
 
-  // Add the current step to the recipe
   const addStep = () => {
-    if (!stepInput.instruction) return; // simple check
+    if (!stepInput.instruction) return;
     const newStep = {
       ...stepInput,
       stepNumber: recipe.steps.length + 1
@@ -74,13 +63,9 @@ function RecipeForm({ onRecipeCreated }) {
     setStepInput({ instruction: '' });
   };
 
-  // Add tags by splitting a comma-separated string
   const addTags = () => {
     if (!tagInput.trim()) return;
-    const tags = tagInput
-      .split(',')
-      .map(t => t.trim())
-      .filter(t => t.length > 0);
+    const tags = tagInput.split(',').map(t => t.trim()).filter(t => t.length > 0);
     setRecipe(prev => ({
       ...prev,
       tags: [...prev.tags, ...tags]
@@ -88,35 +73,22 @@ function RecipeForm({ onRecipeCreated }) {
     setTagInput('');
   };
 
-  // Handle form submission: send POST request to backend
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios
-      .post(`${process.env.REACT_APP_API_URL}/api/recipes`, recipe)
+    axios.put(`${process.env.REACT_APP_API_URL}/api/recipes/${recipe.id}`, recipe)
       .then(response => {
-        setMessage('Recipe created successfully!');
-        if (onRecipeCreated) onRecipeCreated(response.data);
-        // Clear the form
-        setRecipe({
-          title: '',
-          description: '',
-          prepTime: '',
-          cookTime: '',
-          servings: '',
-          ingredients: [],
-          steps: [],
-          tags: []
-        });
+        setMessage('Recipe updated successfully!');
+        onUpdate(response.data);
       })
       .catch(error => {
-        setMessage('Error creating recipe.');
-        console.error('POST /api/recipes error:', error);
+        setMessage('Error updating recipe.');
+        console.error('PUT /api/recipes error:', error);
       });
   };
 
   return (
-    <div className="recipe-form">
-      <h2>Create New Recipe</h2>
+    <div className="recipe-edit-form">
+      <h2>Edit Recipe</h2>
       {message && <p className="status-message">{message}</p>}
       <form onSubmit={handleSubmit}>
         {/* Basic Fields */}
@@ -145,9 +117,7 @@ function RecipeForm({ onRecipeCreated }) {
         <h3>Ingredients</h3>
         <ul>
           {recipe.ingredients.map((ing, idx) => (
-            <li key={idx}>
-              {ing.name} – {ing.quantity} {ing.measurementUnit}
-            </li>
+            <li key={idx}>{ing.name} – {ing.quantity} {ing.measurementUnit}</li>
           ))}
         </ul>
         <div className="nested-inputs">
@@ -210,10 +180,11 @@ function RecipeForm({ onRecipeCreated }) {
           <button type="button" onClick={addTags}>Add Tags</button>
         </div>
 
-        <button type="submit">Create Recipe</button>
+        <button type="submit">Update Recipe</button>
+        <button type="button" onClick={onCancel}>Cancel</button>
       </form>
     </div>
   );
 }
 
-export default RecipeForm;
+export default RecipeEditForm;

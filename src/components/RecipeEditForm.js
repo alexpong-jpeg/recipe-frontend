@@ -1,23 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Form, Button, Row, Col, Container, Alert } from 'react-bootstrap';
 import './RecipeEditForm.css';
 
 function RecipeEditForm({ initialRecipe, onCancel, onUpdate }) {
   const [recipe, setRecipe] = useState(initialRecipe);
-
-  // State for current nested input fields
   const [ingredientInput, setIngredientInput] = useState({
     name: '',
     quantity: '',
     measurementUnit: ''
   });
-  const [stepInput, setStepInput] = useState({
-    instruction: ''
-  });
+  const [stepInput, setStepInput] = useState({ instruction: '' });
   const [tagInput, setTagInput] = useState('');
   const [message, setMessage] = useState('');
 
-  // Update local recipe state if the initialRecipe prop changes
   useEffect(() => {
     setRecipe(initialRecipe);
   }, [initialRecipe]);
@@ -75,115 +71,111 @@ function RecipeEditForm({ initialRecipe, onCancel, onUpdate }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.put(`${process.env.REACT_APP_API_URL}/api/recipes/${recipe.id}`, recipe)
+    axios
+      .put(`${process.env.REACT_APP_API_URL}/api/recipes/${recipe.id}`, recipe)
       .then(response => {
         setMessage('Recipe updated successfully!');
         onUpdate(response.data);
       })
       .catch(error => {
         setMessage('Error updating recipe.');
-        console.error('PUT /api/recipes error:', error);
+        console.error('PUT error:', error);
       });
   };
 
   return (
-    <div className="recipe-edit-form">
-      <h2>Edit Recipe</h2>
-      {message && <p className="status-message">{message}</p>}
-      <form onSubmit={handleSubmit}>
-        {/* Basic Fields */}
-        <div className="form-group">
-          <label>Title:</label>
-          <input type="text" name="title" value={recipe.title} onChange={handleChange} required />
-        </div>
-        <div className="form-group">
-          <label>Description:</label>
-          <textarea name="description" value={recipe.description} onChange={handleChange} required />
-        </div>
-        <div className="form-group">
-          <label>Preparation Time (min):</label>
-          <input type="number" name="prepTime" value={recipe.prepTime} onChange={handleChange} required />
-        </div>
-        <div className="form-group">
-          <label>Cooking Time (min):</label>
-          <input type="number" name="cookTime" value={recipe.cookTime} onChange={handleChange} required />
-        </div>
-        <div className="form-group">
-          <label>Servings:</label>
-          <input type="number" name="servings" value={recipe.servings} onChange={handleChange} required />
-        </div>
+    <Container className="my-4">
+      <h2 className="text-center">Edit Recipe</h2>
+      {message && <Alert variant="info">{message}</Alert>}
+      <Form onSubmit={handleSubmit}>
+        <Form.Group as={Row} controlId="formTitle">
+          <Form.Label column sm={3}>Title:</Form.Label>
+          <Col sm={9}>
+            <Form.Control type="text" name="title" value={recipe.title} onChange={handleChange} required />
+          </Col>
+        </Form.Group>
+        <Form.Group as={Row} controlId="formDescription">
+          <Form.Label column sm={3}>Description:</Form.Label>
+          <Col sm={9}>
+            <Form.Control as="textarea" name="description" value={recipe.description} onChange={handleChange} required />
+          </Col>
+        </Form.Group>
+        <Form.Group as={Row} controlId="formPrepTime">
+          <Form.Label column sm={3}>Prep Time (min):</Form.Label>
+          <Col sm={9}>
+            <Form.Control type="number" name="prepTime" value={recipe.prepTime} onChange={handleChange} required />
+          </Col>
+        </Form.Group>
+        <Form.Group as={Row} controlId="formCookTime">
+          <Form.Label column sm={3}>Cook Time (min):</Form.Label>
+          <Col sm={9}>
+            <Form.Control type="number" name="cookTime" value={recipe.cookTime} onChange={handleChange} required />
+          </Col>
+        </Form.Group>
+        <Form.Group as={Row} controlId="formServings">
+          <Form.Label column sm={3}>Servings:</Form.Label>
+          <Col sm={9}>
+            <Form.Control type="number" name="servings" value={recipe.servings} onChange={handleChange} required />
+          </Col>
+        </Form.Group>
 
-        {/* Nested Fields for Ingredients */}
-        <h3>Ingredients</h3>
+        <h4>Ingredients</h4>
         <ul>
           {recipe.ingredients.map((ing, idx) => (
             <li key={idx}>{ing.name} – {ing.quantity} {ing.measurementUnit}</li>
           ))}
         </ul>
-        <div className="nested-inputs">
-          <input
-            type="text"
-            name="name"
-            placeholder="Ingredient name"
-            value={ingredientInput.name}
-            onChange={handleIngredientChange}
-          />
-          <input
-            type="number"
-            name="quantity"
-            placeholder="Quantity"
-            value={ingredientInput.quantity}
-            onChange={handleIngredientChange}
-          />
-          <input
-            type="text"
-            name="measurementUnit"
-            placeholder="Unit"
-            value={ingredientInput.measurementUnit}
-            onChange={handleIngredientChange}
-          />
-          <button type="button" onClick={addIngredient}>Add Ingredient</button>
-        </div>
+        <Row className="align-items-center">
+          <Col sm={4}>
+            <Form.Control type="text" name="name" placeholder="Name" value={ingredientInput.name} onChange={handleIngredientChange} />
+          </Col>
+          <Col sm={3}>
+            <Form.Control type="number" name="quantity" placeholder="Quantity" value={ingredientInput.quantity} onChange={handleIngredientChange} />
+          </Col>
+          <Col sm={3}>
+            <Form.Control type="text" name="measurementUnit" placeholder="Unit" value={ingredientInput.measurementUnit} onChange={handleIngredientChange} />
+          </Col>
+          <Col sm={2}>
+            <Button variant="primary" onClick={addIngredient}>Add</Button>
+          </Col>
+        </Row>
 
-        {/* Nested Fields for Steps */}
-        <h3>Steps</h3>
+        <h4 className="mt-4">Steps</h4>
         <ol>
           {recipe.steps.map((st, idx) => (
             <li key={idx}>{st.instruction}</li>
           ))}
         </ol>
-        <div className="nested-inputs">
-          <input
-            type="text"
-            name="instruction"
-            placeholder="Step instruction"
-            value={stepInput.instruction}
-            onChange={handleStepChange}
-          />
-          <button type="button" onClick={addStep}>Add Step</button>
-        </div>
+        <Row className="align-items-center">
+          <Col sm={10}>
+            <Form.Control type="text" name="instruction" placeholder="Instruction" value={stepInput.instruction} onChange={handleStepChange} />
+          </Col>
+          <Col sm={2}>
+            <Button variant="primary" onClick={addStep}>Add</Button>
+          </Col>
+        </Row>
 
-        {/* Nested Fields for Tags */}
-        <h3>Tags</h3>
+        <h4 className="mt-4">Tags</h4>
         <ul>
           {recipe.tags.map((tag, idx) => (
             <li key={idx}>{tag}</li>
           ))}
         </ul>
-        <div className="nested-inputs">
-          <input
-            type="text"
-            placeholder="Comma separated tags"
-            value={tagInput}
-            onChange={(e) => setTagInput(e.target.value)}
-          />
-          <button type="button" onClick={addTags}>Add Tags</button>
-        </div>
+        <Row className="align-items-center">
+          <Col sm={10}>
+            <Form.Control type="text" placeholder="Comma separated tags" value={tagInput} onChange={(e) => setTagInput(e.target.value)} />
+          </Col>
+          <Col sm={2}>
+            <Button variant="primary" onClick={addTags}>Add</Button>
+          </Col>
+        </Row>
 
-        <button type="submit">Update Recipe</button>
-        <button type="button" onClick={onCancel}>Cancel</button>
-      </form>
-    </div>
+        <div className="text-center mt-4">
+          <Button type="submit" variant="success">Update Recipe</Button>
+          <Button type="button" variant="secondary" onClick={onCancel} className="ml-2">Cancel</Button>
+        </div>
+      </Form>
+    </Container>
   );
 }
 

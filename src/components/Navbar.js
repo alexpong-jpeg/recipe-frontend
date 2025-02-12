@@ -1,26 +1,32 @@
 import React from 'react';
-import './Navbar.css';
+import { Navbar, Nav } from 'react-bootstrap'; // Only needed if using react-bootstrap components
+import './Navbar.css'; // Your custom styles (if any)
 
-function Navbar({ setView, currentView }) {
+function AppNavbar({ setView, currentView }) {
   return (
-    <nav className="navbar">
-      <h1>Recipe Manager</h1>
-      <ul className="nav-links">
-        <li
-          className={currentView === 'list' ? 'active' : ''}
-          onClick={() => setView('list')}
-        >
-          All Recipes
-        </li>
-        <li
-          className={currentView === 'new' ? 'active' : ''}
-          onClick={() => setView('new')}
-        >
-          New Recipe
-        </li>
-      </ul>
-    </nav>
+    <Navbar bg="primary" variant="dark" expand="lg">
+      <Navbar.Brand style={{ cursor: 'pointer' }} onClick={() => setView('list')}>
+        Recipe Manager
+      </Navbar.Brand>
+      <Navbar.Toggle aria-controls="basic-navbar-nav" />
+      <Navbar.Collapse id="basic-navbar-nav">
+        <Nav className="ml-auto">
+          <Nav.Link
+            active={currentView === 'list'}
+            onClick={() => setView('list')}
+          >
+            All Recipes
+          </Nav.Link>
+          <Nav.Link
+            active={currentView === 'new'}
+            onClick={() => setView('new')}
+          >
+            New Recipe
+          </Nav.Link>
+        </Nav>
+      </Navbar.Collapse>
+    </Navbar>
   );
 }
 
-export default Navbar;
+export default AppNavbar;

@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
-import { Card, Button, Badge, ButtonGroup } from 'react-bootstrap';
-// Example icons from Font Awesome (react-icons/fa)
-import { FaEdit, FaTrashAlt, FaEye } from 'react-icons/fa';
+import { Card, Button, Badge } from 'react-bootstrap';
+import { FaEdit, FaTrashAlt, FaEye } from 'react-icons/fa'; // optional icons
 
 function RecipeCard({ recipe, onEdit, onDelete, onTagToggle, selectedTag }) {
   const [expanded, setExpanded] = useState(false);
   const toggleDetails = () => setExpanded(!expanded);
 
   return (
-    <Card className="mb-4">
-      <Card.Img variant="top" src="https://placehold.co/400" alt="Recipe" />
+    <Card className="mb-4" style={{ minWidth: '220px' }}>
+      <Card.Img 
+        variant="top" 
+        src="https://placehold.co/400" 
+        alt="Recipe image placeholder" 
+      />
       <Card.Body>
         <Card.Title>{recipe.title}</Card.Title>
         <Card.Subtitle className="mb-2 text-muted">
@@ -18,8 +21,7 @@ function RecipeCard({ recipe, onEdit, onDelete, onTagToggle, selectedTag }) {
         <Card.Text className="text-muted">
           Prep: {recipe.prepTime} min | Cook: {recipe.cookTime} min | Servings: {recipe.servings}
         </Card.Text>
-
-        {/* Tags as clickable badges */}
+        
         {recipe.tags && recipe.tags.length > 0 && (
           <div className="mb-2">
             <Card.Subtitle className="mb-1">Tags:</Card.Subtitle>
@@ -44,6 +46,7 @@ function RecipeCard({ recipe, onEdit, onDelete, onTagToggle, selectedTag }) {
 
         {expanded && (
           <>
+            {/* Expand to show ingredients, steps, etc. */}
             {recipe.ingredients && recipe.ingredients.length > 0 && (
               <div>
                 <Card.Subtitle className="mt-2">Ingredients:</Card.Subtitle>
@@ -69,32 +72,35 @@ function RecipeCard({ recipe, onEdit, onDelete, onTagToggle, selectedTag }) {
           </>
         )}
 
-        {/* More modern approach for Edit, Delete, View buttons */}
-        <div className="d-flex justify-content-between mt-3">
-          <ButtonGroup size="sm">
-            <Button
-              variant="outline-primary"
-              onClick={() => onEdit(recipe.id)}
-              className="d-flex align-items-center"
-            >
-              <FaEdit className="me-1" /> Edit
-            </Button>
-            <Button
-              variant="outline-danger"
-              onClick={() => onDelete(recipe.id)}
-              className="d-flex align-items-center"
-            >
-              <FaTrashAlt className="me-1" /> Delete
-            </Button>
-            <Button
-              variant="outline-info"
-              onClick={toggleDetails}
-              className="d-flex align-items-center"
-            >
-              <FaEye className="me-1" />
-              {expanded ? 'Hide' : 'View'}
-            </Button>
-          </ButtonGroup>
+        {/* Buttons in a flex container that wraps if needed */}
+        <div className="d-flex flex-wrap gap-2 mt-3">
+          <Button
+            variant="outline-primary"
+            size="sm"
+            onClick={() => onEdit(recipe.id)}
+            className="d-flex align-items-center"
+          >
+            <FaEdit className="me-1" />
+            Edit
+          </Button>
+          <Button
+            variant="outline-danger"
+            size="sm"
+            onClick={() => onDelete(recipe.id)}
+            className="d-flex align-items-center"
+          >
+            <FaTrashAlt className="me-1" />
+            Delete
+          </Button>
+          <Button
+            variant="outline-info"
+            size="sm"
+            onClick={toggleDetails}
+            className="d-flex align-items-center"
+          >
+            <FaEye className="me-1" />
+            {expanded ? 'Hide' : 'View'}
+          </Button>
         </div>
       </Card.Body>
     </Card>

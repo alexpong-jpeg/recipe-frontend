@@ -8,6 +8,11 @@ function RecipeCard({ recipe, onEdit, onDelete, onTagToggle, selectedTag }) {
 
   return (
     <Card className="mb-4">
+        <Card.Img 
+        variant="top" 
+        src="https://placehold.co/400" 
+        alt="Recipe placeholder"
+      />
       <Card.Body>
         <Card.Title>{recipe.title}</Card.Title>
         <Card.Text>{recipe.description}</Card.Text>

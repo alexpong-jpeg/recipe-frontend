@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Form, Button, Row, Col, Container, Alert } from 'react-bootstrap';
-import './RecipeEditForm.css';
 
 function RecipeEditForm({ initialRecipe, onCancel, onUpdate }) {
   const [recipe, setRecipe] = useState(initialRecipe);

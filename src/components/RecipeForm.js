@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Form, Button, Row, Col, Container, Alert } from 'react-bootstrap';
-import './RecipeForm.css';
 
 function RecipeForm({ onRecipeCreated }) {
   const [recipe, setRecipe] = useState({

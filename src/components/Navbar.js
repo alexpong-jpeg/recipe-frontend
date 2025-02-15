@@ -1,6 +1,5 @@
 import React from 'react';
 import { Navbar, Nav } from 'react-bootstrap'; // Only needed if using react-bootstrap components
-import './Navbar.css'; // Your custom styles (if any)
 
 function AppNavbar({ setView, currentView }) {
   return (

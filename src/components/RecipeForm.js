@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Form, Button, Row, Col, Container, Alert } from 'react-bootstrap';
+import { Container, Form, Button, Row, Col, Alert } from 'react-bootstrap';
 
 function RecipeForm({ onRecipeCreated }) {
   const [recipe, setRecipe] = useState({
@@ -13,6 +13,8 @@ function RecipeForm({ onRecipeCreated }) {
     steps: [],
     tags: []
   });
+
+  // Update ingredient input fields; note quantity is now a string.
   const [ingredientInput, setIngredientInput] = useState({
     name: '',
     quantity: '',
@@ -22,32 +24,36 @@ function RecipeForm({ onRecipeCreated }) {
   const [tagInput, setTagInput] = useState('');
   const [message, setMessage] = useState('');
 
+  // Handle main recipe field changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setRecipe((prev) => ({ ...prev, [name]: value }));
+    setRecipe(prev => ({ ...prev, [name]: value }));
   };
 
+  // Handle changes for ingredient input fields
   const handleIngredientChange = (e) => {
     const { name, value } = e.target;
-    setIngredientInput((prev) => ({ ...prev, [name]: value }));
+    setIngredientInput(prev => ({ ...prev, [name]: value }));
   };
 
   const addIngredient = () => {
     if (!ingredientInput.name) return;
+    // Ingredient quantity is treated as a string (e.g., "1/4")
     const newIngredient = {
       ...ingredientInput,
       ingredientOrder: recipe.ingredients.length + 1
     };
-    setRecipe((prev) => ({
+    setRecipe(prev => ({
       ...prev,
       ingredients: [...prev.ingredients, newIngredient]
     }));
     setIngredientInput({ name: '', quantity: '', measurementUnit: '' });
   };
 
+  // Handle step input changes
   const handleStepChange = (e) => {
     const { name, value } = e.target;
-    setStepInput((prev) => ({ ...prev, [name]: value }));
+    setStepInput(prev => ({ ...prev, [name]: value }));
   };
 
   const addStep = () => {
@@ -56,33 +62,33 @@ function RecipeForm({ onRecipeCreated }) {
       ...stepInput,
       stepNumber: recipe.steps.length + 1
     };
-    setRecipe((prev) => ({
+    setRecipe(prev => ({
       ...prev,
       steps: [...prev.steps, newStep]
     }));
     setStepInput({ instruction: '' });
   };
 
+  // Handle tag input
   const addTags = () => {
     if (!tagInput.trim()) return;
-    const tags = tagInput
-      .split(',')
-      .map((t) => t.trim())
-      .filter((t) => t.length > 0);
-    setRecipe((prev) => ({
+    const tags = tagInput.split(',').map(t => t.trim()).filter(t => t.length > 0);
+    setRecipe(prev => ({
       ...prev,
       tags: [...prev.tags, ...tags]
     }));
     setTagInput('');
   };
 
+  // Handle form submission: send POST request to backend
   const handleSubmit = (e) => {
     e.preventDefault();
     axios
       .post(`${process.env.REACT_APP_API_URL}/api/recipes`, recipe)
-      .then((response) => {
+      .then(response => {
         setMessage('Recipe created successfully!');
         if (onRecipeCreated) onRecipeCreated(response.data);
+        // Clear form fields after submission.
         setRecipe({
           title: '',
           description: '',
@@ -94,9 +100,9 @@ function RecipeForm({ onRecipeCreated }) {
           tags: []
         });
       })
-      .catch((error) => {
+      .catch(error => {
         setMessage('Error creating recipe.');
-        console.error('Error:', error);
+        console.error('Error in POST /api/recipes:', error);
       });
   };
 
@@ -105,10 +111,9 @@ function RecipeForm({ onRecipeCreated }) {
       <h2 className="text-center">Create New Recipe</h2>
       {message && <Alert variant="success">{message}</Alert>}
       <Form onSubmit={handleSubmit}>
+        {/* Basic Recipe Fields */}
         <Form.Group as={Row} controlId="formTitle">
-          <Form.Label column sm={3}>
-            Title:
-          </Form.Label>
+          <Form.Label column sm={3}>Title:</Form.Label>
           <Col sm={9}>
             <Form.Control
               type="text"
@@ -120,9 +125,7 @@ function RecipeForm({ onRecipeCreated }) {
           </Col>
         </Form.Group>
         <Form.Group as={Row} controlId="formDescription">
-          <Form.Label column sm={3}>
-            Description:
-          </Form.Label>
+          <Form.Label column sm={3}>Description:</Form.Label>
           <Col sm={9}>
             <Form.Control
               as="textarea"
@@ -134,9 +137,7 @@ function RecipeForm({ onRecipeCreated }) {
           </Col>
         </Form.Group>
         <Form.Group as={Row} controlId="formPrepTime">
-          <Form.Label column sm={3}>
-            Prep Time (min):
-          </Form.Label>
+          <Form.Label column sm={3}>Prep Time (min):</Form.Label>
           <Col sm={9}>
             <Form.Control
               type="number"
@@ -148,9 +149,7 @@ function RecipeForm({ onRecipeCreated }) {
           </Col>
         </Form.Group>
         <Form.Group as={Row} controlId="formCookTime">
-          <Form.Label column sm={3}>
-            Cook Time (min):
-          </Form.Label>
+          <Form.Label column sm={3}>Cook Time (min):</Form.Label>
           <Col sm={9}>
             <Form.Control
               type="number"
@@ -162,9 +161,7 @@ function RecipeForm({ onRecipeCreated }) {
           </Col>
         </Form.Group>
         <Form.Group as={Row} controlId="formServings">
-          <Form.Label column sm={3}>
-            Servings:
-          </Form.Label>
+          <Form.Label column sm={3}>Servings:</Form.Label>
           <Col sm={9}>
             <Form.Control
               type="number"
@@ -175,7 +172,7 @@ function RecipeForm({ onRecipeCreated }) {
             />
           </Col>
         </Form.Group>
-        
+
         {/* Ingredients Section */}
         <h4>Ingredients</h4>
         <ul>
@@ -196,8 +193,9 @@ function RecipeForm({ onRecipeCreated }) {
             />
           </Col>
           <Col sm={3}>
+            {/* Changed type from number to text */}
             <Form.Control
-              type="number"
+              type="text"
               name="quantity"
               placeholder="Quantity"
               value={ingredientInput.quantity}
@@ -214,9 +212,7 @@ function RecipeForm({ onRecipeCreated }) {
             />
           </Col>
           <Col sm={2}>
-            <Button variant="primary" onClick={addIngredient}>
-              Add
-            </Button>
+            <Button variant="primary" onClick={addIngredient}>Add</Button>
           </Col>
         </Row>
 
@@ -238,9 +234,7 @@ function RecipeForm({ onRecipeCreated }) {
             />
           </Col>
           <Col sm={2}>
-            <Button variant="primary" onClick={addStep}>
-              Add
-            </Button>
+            <Button variant="primary" onClick={addStep}>Add</Button>
           </Col>
         </Row>
 
@@ -261,16 +255,12 @@ function RecipeForm({ onRecipeCreated }) {
             />
           </Col>
           <Col sm={2}>
-            <Button variant="primary" onClick={addTags}>
-              Add
-            </Button>
+            <Button variant="primary" onClick={addTags}>Add</Button>
           </Col>
         </Row>
 
         <div className="text-center mt-4">
-          <Button type="submit" variant="success">
-            Create Recipe
-          </Button>
+          <Button type="submit" variant="success">Create Recipe</Button>
         </div>
       </Form>
     </Container>

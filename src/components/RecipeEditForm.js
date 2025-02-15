@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Form, Button, Row, Col, Container, Alert } from 'react-bootstrap';
+import { Container, Form, Button, Row, Col, Alert } from 'react-bootstrap';
 
 function RecipeEditForm({ initialRecipe, onCancel, onUpdate }) {
   const [recipe, setRecipe] = useState(initialRecipe);
@@ -70,15 +70,14 @@ function RecipeEditForm({ initialRecipe, onCancel, onUpdate }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios
-      .put(`${process.env.REACT_APP_API_URL}/api/recipes/${recipe.id}`, recipe)
+    axios.put(`${process.env.REACT_APP_API_URL}/api/recipes/${recipe.id}`, recipe)
       .then(response => {
         setMessage('Recipe updated successfully!');
         onUpdate(response.data);
       })
       .catch(error => {
         setMessage('Error updating recipe.');
-        console.error('PUT error:', error);
+        console.error('Error:', error);
       });
   };
 
@@ -129,7 +128,7 @@ function RecipeEditForm({ initialRecipe, onCancel, onUpdate }) {
             <Form.Control type="text" name="name" placeholder="Name" value={ingredientInput.name} onChange={handleIngredientChange} />
           </Col>
           <Col sm={3}>
-            <Form.Control type="number" name="quantity" placeholder="Quantity" value={ingredientInput.quantity} onChange={handleIngredientChange} />
+            <Form.Control type="text" name="quantity" placeholder="Quantity" value={ingredientInput.quantity} onChange={handleIngredientChange} />
           </Col>
           <Col sm={3}>
             <Form.Control type="text" name="measurementUnit" placeholder="Unit" value={ingredientInput.measurementUnit} onChange={handleIngredientChange} />
@@ -171,7 +170,7 @@ function RecipeEditForm({ initialRecipe, onCancel, onUpdate }) {
 
         <div className="text-center mt-4">
           <Button type="submit" variant="success">Update Recipe</Button>
-          <Button type="button" variant="secondary" onClick={onCancel} className="ml-2">Cancel</Button>
+          <Button type="button" variant="secondary" onClick={onCancel} className="ms-2">Cancel</Button>
         </div>
       </Form>
     </Container>

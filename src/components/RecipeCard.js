@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card, Button } from 'react-bootstrap';
 
-function RecipeCard({ recipe, onEdit, onDelete }) {
+function RecipeCard({ recipe, onEdit, onDelete, onTagToggle, selectedTag }) {
   const [expanded, setExpanded] = useState(false);
 
   const toggleDetails = () => setExpanded(!expanded);
@@ -17,13 +17,24 @@ function RecipeCard({ recipe, onEdit, onDelete }) {
           </small>
         </Card.Text>
         {recipe.tags && recipe.tags.length > 0 && (
-          <div>
-            <Card.Subtitle className="mt-2">Tags:</Card.Subtitle>
-            <ul className="list-unstyled">
-              {recipe.tags.map((tag, index) => (
-                <li key={index}>{tag.name ? tag.name : tag}</li>
-              ))}
-            </ul>
+          <div className="mb-2">
+            <Card.Subtitle className="mb-1">Tags:</Card.Subtitle>
+            {recipe.tags.map((tag, index) => {
+              // Determine tag name whether tag is an object (with a 'name') or just a string.
+              const tagName = tag.name ? tag.name : tag;
+              const variant = selectedTag === tagName ? 'primary' : 'outline-primary';
+              return (
+                <Button
+                  key={index}
+                  variant={variant}
+                  size="sm"
+                  onClick={() => onTagToggle(tagName)}
+                  className="me-1 mb-1"
+                >
+                  {tagName}
+                </Button>
+              );
+            })}
           </div>
         )}
         {expanded && (

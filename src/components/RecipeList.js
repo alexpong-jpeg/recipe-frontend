@@ -8,6 +8,7 @@ function RecipeList() {
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingRecipeId, setEditingRecipeId] = useState(null);
+  const [selectedTagFilter, setSelectedTagFilter] = useState(null);
 
   // Fetch recipes from the backend
   const fetchRecipes = () => {
@@ -54,6 +55,22 @@ function RecipeList() {
     setEditingRecipeId(null);
   };
 
+  // Handle toggling of tag filter from a RecipeCard
+  const handleTagToggle = (tagName) => {
+    if (selectedTagFilter === tagName) {
+      setSelectedTagFilter(null);
+    } else {
+      setSelectedTagFilter(tagName);
+    }
+  };
+
+  // Filter recipes based on the selected tag, if any.
+  const filteredRecipes = selectedTagFilter
+    ? recipes.filter(recipe =>
+        recipe.tags.some(tag => (tag.name ? tag.name : tag) === selectedTagFilter)
+      )
+    : recipes;
+
   if (loading) {
     return <p>Loading recipes...</p>;
   }
@@ -62,11 +79,11 @@ function RecipeList() {
     <Container className="my-4">
       <h2 className="text-center mb-4">All Recipes</h2>
       <Row>
-        {recipes.length === 0 ? (
-          <p>No recipes found. Try creating a new recipe!</p>
+        {filteredRecipes.length === 0 ? (
+          <p>No recipes found for the selected tag.</p>
         ) : (
-          recipes.map(recipe => (
-            <Col key={recipe.id} xs={12} sm={6} md={4} lg={3}>
+          filteredRecipes.map(recipe => (
+            <Col key={recipe.id} xs={12} sm={6} md={4} lg={3} className="mb-4">
               {editingRecipeId === recipe.id ? (
                 <RecipeEditForm 
                   initialRecipe={recipe} 
@@ -78,6 +95,8 @@ function RecipeList() {
                   recipe={recipe} 
                   onEdit={handleEdit} 
                   onDelete={handleDelete} 
+                  onTagToggle={handleTagToggle}
+                  selectedTag={selectedTagFilter}
                 />
               )}
             </Col>

@@ -4,9 +4,20 @@ import { FaEdit, FaTrashAlt, FaEye } from 'react-icons/fa';
 import RecipeDetailsModal from './RecipeDetailsModal'; // existing modal for details
 import RecipeEditModal from './RecipeEditModal'; // new modal for editing
 
+function truncateDescription(desc = '', wordLimit = 10) {
+    // Split on whitespace
+    const words = desc.trim().split(/\s+/);
+    // If the description has fewer words than the limit, just return it
+    if (words.length <= wordLimit) return desc;
+    // Otherwise, slice and append ellipsis
+    return words.slice(0, wordLimit).join(' ') + '...';
+  }
+  
 function RecipeCard({ recipe, onEdit, onDelete, onTagToggle, selectedTag, onUpdate }) {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+
+  const shortDescription = truncateDescription(recipe.description, 10);
 
   return (
     <>
@@ -18,7 +29,7 @@ function RecipeCard({ recipe, onEdit, onDelete, onTagToggle, selectedTag, onUpda
         />
         <Card.Body>
           <Card.Title>{recipe.title}</Card.Title>
-          <Card.Subtitle className="mb-2 text-muted">{recipe.description}</Card.Subtitle>
+          <Card.Subtitle className="mb-2 text-muted">{shortDescription}</Card.Subtitle>
           <Card.Text className="text-muted">
             Prep: {recipe.prepTime} min | Cook: {recipe.cookTime} min | Servings: {recipe.servings}
           </Card.Text>

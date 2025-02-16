@@ -1,8 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Modal, Button, ListGroup } from 'react-bootstrap';
 
 function RecipeDetailsModal({ show, onHide, recipe }) {
+  // Local state to track which ingredients are struck
+  // This could be an object with keys as ingredient indices, and values as booleans
+  const [struckIngredients, setStruckIngredients] = useState({});
+
   if (!recipe) return null;
+
+  // Toggles the strike-through for a given ingredient index
+  const handleIngredientClick = (idx) => {
+    setStruckIngredients((prev) => {
+      const updated = { ...prev };
+      // If already struck, remove it; otherwise, set it to true
+      if (updated[idx]) {
+        delete updated[idx];
+      } else {
+        updated[idx] = true;
+      }
+      return updated;
+    });
+  };
 
   return (
     <Modal show={show} onHide={onHide} size="lg" centered>
@@ -19,7 +37,15 @@ function RecipeDetailsModal({ show, onHide, recipe }) {
             <h5>Ingredients:</h5>
             <ListGroup variant="flush">
               {recipe.ingredients.map((ing, idx) => (
-                <ListGroup.Item key={idx}>
+                <ListGroup.Item
+                  key={idx}
+                  // Toggle strike-through if this index is in struckIngredients
+                  style={{
+                    textDecoration: struckIngredients[idx] ? 'line-through' : 'none',
+                    cursor: 'pointer'
+                  }}
+                  onClick={() => handleIngredientClick(idx)}
+                >
                   {ing.name} - {ing.quantity} {ing.measurementUnit}
                 </ListGroup.Item>
               ))}

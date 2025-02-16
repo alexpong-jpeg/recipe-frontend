@@ -2,15 +2,12 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Container, Row, Col } from 'react-bootstrap';
 import RecipeCard from './RecipeCard';
-import RecipeEditForm from './RecipeEditForm';
 
 function RecipeList() {
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [editingRecipeId, setEditingRecipeId] = useState(null);
   const [selectedTagFilter, setSelectedTagFilter] = useState(null);
 
-  // Fetch recipes from the backend
   const fetchRecipes = () => {
     axios
       .get(`${process.env.REACT_APP_API_URL}/api/recipes`)
@@ -28,7 +25,6 @@ function RecipeList() {
     fetchRecipes();
   }, []);
 
-  // Delete a recipe
   const handleDelete = (id) => {
     axios
       .delete(`${process.env.REACT_APP_API_URL}/api/recipes/${id}`)
@@ -40,22 +36,7 @@ function RecipeList() {
       });
   };
 
-  // Switch to edit mode for a recipe
-  const handleEdit = (id) => {
-    setEditingRecipeId(id);
-  };
-
-  // Callback when an update is successful
-  const handleUpdate = (updatedRecipe) => {
-    setRecipes(recipes.map(r => (r.id === updatedRecipe.id ? updatedRecipe : r)));
-    setEditingRecipeId(null);
-  };
-
-  const handleCancelEdit = () => {
-    setEditingRecipeId(null);
-  };
-
-  // Handle toggling of tag filter from a RecipeCard
+  // Handle tag filter toggling.
   const handleTagToggle = (tagName) => {
     if (selectedTagFilter === tagName) {
       setSelectedTagFilter(null);
@@ -64,7 +45,6 @@ function RecipeList() {
     }
   };
 
-  // Filter recipes based on the selected tag, if any.
   const filteredRecipes = selectedTagFilter
     ? recipes.filter(recipe =>
         recipe.tags.some(tag => (tag.name ? tag.name : tag) === selectedTagFilter)
@@ -84,21 +64,15 @@ function RecipeList() {
         ) : (
           filteredRecipes.map(recipe => (
             <Col key={recipe.id} xs={12} sm={6} md={4} lg={3} className="mb-4">
-              {editingRecipeId === recipe.id ? (
-                <RecipeEditForm 
-                  initialRecipe={recipe} 
-                  onCancel={handleCancelEdit} 
-                  onUpdate={handleUpdate} 
-                />
-              ) : (
-                <RecipeCard 
-                  recipe={recipe} 
-                  onEdit={handleEdit} 
-                  onDelete={handleDelete} 
-                  onTagToggle={handleTagToggle}
-                  selectedTag={selectedTagFilter}
-                />
-              )}
+              <RecipeCard 
+                recipe={recipe} 
+                onDelete={handleDelete}
+                onTagToggle={handleTagToggle}
+                selectedTag={selectedTagFilter}
+                onUpdate={(updatedRecipe) => {
+                  setRecipes(recipes.map(r => (r.id === updatedRecipe.id ? updatedRecipe : r)));
+                }}
+              />
             </Col>
           ))
         )}
